@@ -16,7 +16,9 @@ main()
   .catch((err) => {
     console.error('Failed to connect to DB')
   })
-
+app.get('/', (req, res) => {
+  res.send('API is running 🚀');
+});
 // user routes
 app.use('/api/v1/users', router2)
 // product routes
