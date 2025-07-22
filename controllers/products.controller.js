@@ -8,14 +8,22 @@ export const getAllProducts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10
     const skip = (page - 1) * limit
 
-    // optional filters
+    // Optional filters
     const category = req.query.category ? { category: req.query.category } : {}
+    const isFeatured =
+      req.query.isFeatured === 'true' ? { isFeatured: true } : {}
+
     const sortBy = req.query.sort || 'createdAt'
     const order = req.query.order === 'asc' ? 1 : -1
 
-    const total = await Product.countDocuments({ ...category })
+    const filter = {
+      ...category,
+      ...isFeatured,
+    }
 
-    const products = await Product.find({ ...category })
+    const total = await Product.countDocuments(filter)
+
+    const products = await Product.find(filter)
       .sort({ [sortBy]: order })
       .skip(skip)
       .limit(limit)

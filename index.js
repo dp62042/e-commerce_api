@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
+import cors from 'cors'
 const app = express()
 import main from './config/db.js'
 import router from './routers/products.router.js'
@@ -8,6 +9,11 @@ import { errorHandler } from './middlewares/errorMiddleware.js'
 import router2 from './routers/users.router.js'
 // Body parser
 app.use(express.json())
+app.use(
+  cors({
+    origin: '*', // Allow ALL (for dev)
+  })
+)
 
 main()
   .then(() => {
@@ -16,7 +22,9 @@ main()
   .catch((err) => {
     console.error('Failed to connect to DB')
   })
-
+app.get('/', (req, res) => {
+  res.send('API is running 🚀')
+})
 // user routes
 app.use('/api/v1/users', router2)
 // product routes
