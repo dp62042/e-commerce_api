@@ -4,32 +4,31 @@ import Product from '../models/products.model.js'
 
 export const getAllProducts = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const skip = (page - 1) * limit
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    // optional filters
-    const category = req.query.category ? { category: req.query.category } : {}
-    const sortBy = req.query.sort || 'createdAt'
-    const order = req.query.order === 'asc' ? 1 : -1
+    // Optional filters
+    const category = req.query.category ? { category: req.query.category } : {};
+    const isFeatured =
+      req.query.isFeatured === 'true'
+        ? { isFeatured: true }
+        : {};
 
-    const total = await Product.countDocuments({ ...category })
+    const sortBy = req.query.sort || 'createdAt';
+    const order = req.query.order === 'asc' ? 1 : -1;
 
-    const isFeatured = req.query.isFeatured
+    const filter = {
+      ...category,
+      ...isFeatured,
+    };
 
-    let filter = {}
+    const total = await Product.countDocuments(filter);
 
-    if (isFeatured === 'true') {
-      filter.isFeatured = true
-    }
-
-    const isFeaturedProducts = await Product.find(filter)
-    res.json(isFeaturedProducts)
-
-    const products = await Product.find({ ...category })
+    const products = await Product.find(filter)
       .sort({ [sortBy]: order })
       .skip(skip)
-      .limit(limit)
+      .limit(limit);
 
     res.status(200).json({
       total,
@@ -37,11 +36,12 @@ export const getAllProducts = async (req, res, next) => {
       pages: Math.ceil(total / limit),
       count: products.length,
       products,
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
 
 // Get single product by ID  (GET:ID)
 
