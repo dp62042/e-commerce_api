@@ -23,8 +23,13 @@ main()
     console.error('Failed to connect to DB')
   })
 app.get('/', (req, res) => {
+<<<<<<< HEAD
   res.send('API is running 🚀')
 })
+=======
+  res.send('API is running 🚀');
+});
+>>>>>>> 0cdbe5cec83ef71f7823bd7d412893f7a40c54d1
 // user routes
 app.use('/api/v1/users', router2)
 // product routes

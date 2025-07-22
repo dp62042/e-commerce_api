@@ -4,11 +4,12 @@ import Product from '../models/products.model.js'
 
 export const getAllProducts = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const skip = (page - 1) * limit
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     // Optional filters
+<<<<<<< HEAD
     const category = req.query.category ? { category: req.query.category } : {}
     const isFeatured =
       req.query.isFeatured === 'true' ? { isFeatured: true } : {}
@@ -22,11 +23,28 @@ export const getAllProducts = async (req, res, next) => {
     }
 
     const total = await Product.countDocuments(filter)
+=======
+    const category = req.query.category ? { category: req.query.category } : {};
+    const isFeatured =
+      req.query.isFeatured === 'true'
+        ? { isFeatured: true }
+        : {};
+
+    const sortBy = req.query.sort || 'createdAt';
+    const order = req.query.order === 'asc' ? 1 : -1;
+
+    const filter = {
+      ...category,
+      ...isFeatured,
+    };
+
+    const total = await Product.countDocuments(filter);
+>>>>>>> 0cdbe5cec83ef71f7823bd7d412893f7a40c54d1
 
     const products = await Product.find(filter)
       .sort({ [sortBy]: order })
       .skip(skip)
-      .limit(limit)
+      .limit(limit);
 
     res.status(200).json({
       total,
@@ -34,11 +52,12 @@ export const getAllProducts = async (req, res, next) => {
       pages: Math.ceil(total / limit),
       count: products.length,
       products,
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
 
 // Get single product by ID  (GET:ID)
 
