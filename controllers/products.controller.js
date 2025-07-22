@@ -15,6 +15,17 @@ export const getAllProducts = async (req, res, next) => {
 
     const total = await Product.countDocuments({ ...category })
 
+    const isFeatured = req.query.isFeatured
+
+    let filter = {}
+
+    if (isFeatured === 'true') {
+      filter.isFeatured = true
+    }
+
+    const isFeaturedProducts = await Product.find(filter)
+    res.json(isFeaturedProducts)
+
     const products = await Product.find({ ...category })
       .sort({ [sortBy]: order })
       .skip(skip)
